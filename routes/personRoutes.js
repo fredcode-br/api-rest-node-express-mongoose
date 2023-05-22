@@ -71,11 +71,11 @@ router.patch('/:id', async (req, res) => {
         salary,
         approved,
     };
-    
+
     try{
         const updatedPerson = await Person.updateOne({ _id: id}, person);
 
-        if(updatedPerson.matchedCount ===0 ){
+        if(updatedPerson.matchedCount === 0 ){
             res.status(422).json({message: 'usuário não foi encontrado!'});
             return;
         }
@@ -90,11 +90,27 @@ router.patch('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     const id = req.params.id;
+
+    const {name, salary, approved} = req.body;
+    const person = {
+        name, 
+        salary,
+        approved,
+    };
+
+    for (const chave in person) {
+        if (person.hasOwnProperty(chave)) {
+            if(person[chave] == null || person[chave] == ""){
+                res.status(422).json({message: 'Preencha todos os campos!'});
+            }
+        }
+      }
     
     try{
-        const person = await Person.findOne({ _id: id});
-        if(!person){
-            res.status(422).json({message: 'Usuário não foi encontrado!'});
+        const updatedPerson = await Person.updateOne({ _id: id}, person);
+
+        if(updatedPerson.matchedCount ===0 ){
+            res.status(422).json({message: 'usuário não foi encontrado!'});
             return;
         }
         res.status(200).json(person);
